@@ -1,0 +1,12 @@
+/* Conteneur de la map */
+.wpmb-map {
+    width: 100%;
+    min-height: 300px;
+}
+
+/* Si un min-height est défini sur le wrapper du bloc via Gutenberg,
+ * on laisse la map s'adapter à cette hauteur.
+ */
+.wp-block-wpmb-mapbox-map[style*="min-height"] .wpmb-map {
+    min-height: 100%;
+}

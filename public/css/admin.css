@@ -1,0 +1,204 @@
+/* Admin styles for 17b Map plugin */
+
+.wpmb-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+}
+
+.wpmb-toggle input[type="checkbox"] {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.wpmb-toggle-slider {
+    position: relative;
+    width: 40px;
+    height: 20px;
+    background-color: #ccd0d4;
+    border-radius: 999px;
+    transition: background-color 0.2s ease;
+}
+
+.wpmb-toggle-slider::before {
+    content: "";
+    position: absolute;
+    top: 2px;
+    left: 2px;
+    width: 16px;
+    height: 16px;
+    border-radius: 50%;
+    background-color: #fff;
+    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+    transition: transform 0.2s ease;
+}
+
+.wpmb-toggle input[type="checkbox"]:checked + .wpmb-toggle-slider {
+    background-color: #007cba;
+}
+
+.wpmb-toggle input[type="checkbox"]:checked + .wpmb-toggle-slider::before {
+    transform: translateX(20px);
+}
+
+.wpmb-toggle-label {
+    font-weight: 500;
+}
+
+.wpmb-block-preview {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px dashed #ccd0d4;
+    background-color: #f6f7f7;
+    border-radius: 4px;
+}
+
+.wpmb-marker-row {
+    margin: 12px 0;
+}
+
+.wpmb-marker-row-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.wpmb-marker-row-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+}
+
+.wpmb-marker-col-coords {
+    flex: 0 0 260px;
+    max-width: 100%;
+}
+
+.wpmb-marker-col-meta {
+    flex: 1 1 320px;
+    max-width: 100%;
+}
+
+.wpmb-marker-col-meta .large-text {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.wpmb-remove-marker.button {
+    background-color: #dc3232;
+    border-color: #dc3232;
+    color: #fff;
+}
+
+.wpmb-remove-marker.button:hover,
+.wpmb-remove-marker.button:focus {
+    background-color: #a80000;
+    border-color: #a80000;
+    color: #fff;
+}
+
+@media (max-width: 782px) {
+    .wpmb-marker-row-fields {
+        flex-direction: column;
+    }
+
+    .wpmb-marker-col-coords,
+    .wpmb-marker-col-meta {
+        flex: 1 1 100%;
+    }
+}
+
+/* Meta box sections (accordéon) */
+.wpmb-meta-sections {
+    border-top: 1px solid #dcdcde;
+}
+
+.wpmb-section {
+    border-bottom: 1px solid #dcdcde;
+}
+
+.wpmb-section-header {
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    background: #f6f7f7;
+    border: 0;
+    border-radius: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+}
+
+.wpmb-section-header:focus {
+    outline: 2px solid #2271b1;
+    outline-offset: -2px;
+}
+
+.wpmb-section-title {
+    font-weight: 600;
+}
+
+.wpmb-section-body {
+    padding: 12px;
+    background-color: #fff;
+}
+
+.wpmb-section.is-collapsed .wpmb-section-body {
+    display: none;
+}
+
+.wpmb-meta-sections--accordion .wpmb-section-header::after {
+    content: "▾";
+    font-size: 11px;
+    margin-left: 8px;
+    transform: rotate(0deg);
+    transition: transform 0.15s ease;
+}
+
+.wpmb-section.is-collapsed .wpmb-section-header::after {
+    transform: rotate(-90deg);
+}
+
+/* Geocoder */
+.wpmb-geocoder {
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px dashed #dcdcde;
+}
+
+.wpmb-geocoder-results {
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+    max-height: 180px;
+    overflow: auto;
+    border: 1px solid #dcdcde;
+    border-radius: 2px;
+    background-color: #fff;
+}
+
+.wpmb-geocoder-results:empty {
+    display: none;
+}
+
+.wpmb-geocoder-result {
+    display: block;
+    width: 100%;
+    padding: 6px 8px;
+    border: 0;
+    background: #fff;
+    text-align: left;
+    cursor: pointer;
+    font-size: 13px;
+}
+
+.wpmb-geocoder-result:hover,
+.wpmb-geocoder-result:focus {
+    background-color: #f0f0f1;
+}
