@@ -10,6 +10,77 @@ class WPMB_Assets
         $this->options = $options;
     }
 
+    /**
+     * Récupère les markers issus d'un CPT configuré sur la carte.
+     *
+     * @return array<int, array{lat: float, lng: float, title: string, text: string, url: string}>
+     */
+    private function get_cpt_markers(int $map_id): array
+    {
+        $enabled   = '1' === get_post_meta($map_id, '_wpmb_cpt_enabled', true);
+        $cpt       = (string) get_post_meta($map_id, '_wpmb_cpt_post_type', true);
+        $lat_key   = (string) get_post_meta($map_id, '_wpmb_cpt_lat_meta', true);
+        $lng_key   = (string) get_post_meta($map_id, '_wpmb_cpt_lng_meta', true);
+        $text_key  = (string) get_post_meta($map_id, '_wpmb_cpt_description_meta', true);
+
+        if (! $enabled || '' === $cpt || '' === $lat_key || '' === $lng_key) {
+            return [];
+        }
+
+        $cpt     = sanitize_key($cpt);
+        $lat_key = sanitize_key($lat_key);
+        $lng_key = sanitize_key($lng_key);
+        $text_key = sanitize_key($text_key);
+
+        if ('' === $cpt || '' === $lat_key || '' === $lng_key) {
+            return [];
+        }
+
+        $posts = get_posts([
+            'post_type'      => $cpt,
+            'posts_per_page' => -1,
+            'post_status'    => 'publish',
+            'meta_query'     => [
+                [
+                    'key'     => $lat_key,
+                    'compare' => 'EXISTS',
+                ],
+                [
+                    'key'     => $lng_key,
+                    'compare' => 'EXISTS',
+                ],
+            ],
+        ]);
+
+        $markers = [];
+        foreach ($posts as $cpt_post) {
+            $m_lat = (float) get_post_meta($cpt_post->ID, $lat_key, true);
+            $m_lng = (float) get_post_meta($cpt_post->ID, $lng_key, true);
+
+            if (0.0 === $m_lat && 0.0 === $m_lng) {
+                continue;
+            }
+
+            $text = (string) $cpt_post->post_excerpt;
+            if ('' !== $text_key) {
+                $custom_text = get_post_meta($cpt_post->ID, $text_key, true);
+                if (is_scalar($custom_text) && (string) $custom_text !== '') {
+                    $text = (string) $custom_text;
+                }
+            }
+
+            $markers[] = [
+                'lat'   => $m_lat,
+                'lng'   => $m_lng,
+                'title' => wp_kses_post((string) $cpt_post->post_title),
+                'text'  => wp_kses_post($text),
+                'url'   => esc_url((string) get_permalink($cpt_post)),
+            ];
+        }
+
+        return $markers;
+    }
+
     public function enqueue_admin_assets(string $hook_suffix): void
     {
         if (! function_exists('get_current_screen')) {
@@ -20,6 +91,8 @@ class WPMB_Assets
         if (! $screen || WPMB_CPT::POST_TYPE !== $screen->post_type) {
             return;
         }
+
+        wp_enqueue_media();
 
         wp_enqueue_style(
             'wpmb-admin',
@@ -87,7 +160,10 @@ class WPMB_Assets
             $marker_enabled = '1' === get_post_meta($map_id, '_wpmb_marker_enabled', true);
             $marker_title   = (string) get_post_meta($map_id, '_wpmb_marker_title', true);
             $marker_text    = (string) get_post_meta($map_id, '_wpmb_marker_text', true);
-            $marker_color   = (string) get_post_meta($map_id, '_wpmb_marker_color', true);
+            $marker_color     = (string) get_post_meta($map_id, '_wpmb_marker_color', true);
+            $marker_icon_url  = (string) get_post_meta($map_id, '_wpmb_marker_icon_url', true);
+            $marker_icon_size = (int) get_post_meta($map_id, '_wpmb_marker_icon_size', true);
+            $show_nav_control  = '1' === get_post_meta($map_id, '_wpmb_show_nav_control', true);
 
             $markers_raw = (string) get_post_meta($map_id, '_wpmb_markers', true);
             $markers     = [];
@@ -117,6 +193,8 @@ class WPMB_Assets
                 }
             }
 
+            $cpt_markers = $this->get_cpt_markers($map_id);
+
             if ($zoom <= 0.0) {
                 $zoom = 10.0;
             }
@@ -126,18 +204,22 @@ class WPMB_Assets
             }
 
             $maps[$map_id] = [
-                'id'     => $map_id,
-                'lat'    => $lat,
-                'lng'    => $lng,
-                'zoom'   => $zoom,
-                'style'  => $style_url,
-                'marker' => [
-                    'enabled' => $marker_enabled,
-                    'title'   => $marker_title,
-                    'text'    => $marker_text,
-                    'color'   => $marker_color,
+                'id'             => $map_id,
+                'lat'            => $lat,
+                'lng'            => $lng,
+                'zoom'           => $zoom,
+                'style'          => $style_url,
+                'showNavControl' => $show_nav_control,
+                'marker'         => [
+                    'enabled'  => $marker_enabled,
+                    'title'    => $marker_title,
+                    'text'     => $marker_text,
+                    'color'    => $marker_color,
+                    'iconUrl'  => $marker_icon_url,
+                    'iconSize' => $marker_icon_size >= 16 && $marker_icon_size <= 128 ? $marker_icon_size : 40,
                 ],
-                'markers' => $markers,
+                'markers'      => $markers,
+                'cpt_markers'  => $cpt_markers,
             ];
         }
 
@@ -230,7 +312,10 @@ class WPMB_Assets
         $marker_enabled = '1' === get_post_meta($map_id, '_wpmb_marker_enabled', true);
         $marker_title   = (string) get_post_meta($map_id, '_wpmb_marker_title', true);
         $marker_text    = (string) get_post_meta($map_id, '_wpmb_marker_text', true);
-        $marker_color   = (string) get_post_meta($map_id, '_wpmb_marker_color', true);
+        $marker_color     = (string) get_post_meta($map_id, '_wpmb_marker_color', true);
+        $marker_icon_url  = (string) get_post_meta($map_id, '_wpmb_marker_icon_url', true);
+        $marker_icon_size = (int) get_post_meta($map_id, '_wpmb_marker_icon_size', true);
+        $show_nav_control = '1' === get_post_meta($map_id, '_wpmb_show_nav_control', true);
 
         $markers_raw = (string) get_post_meta($map_id, '_wpmb_markers', true);
         $markers     = [];
@@ -259,6 +344,8 @@ class WPMB_Assets
                 }
             }
         }
+
+        $cpt_markers = $this->get_cpt_markers($map_id);
 
         if (0.0 === $lat && 0.0 === $lng) {
             return;
@@ -307,18 +394,22 @@ class WPMB_Assets
         $config = [
             'accessToken' => $token,
             'map'         => [
-                'id'     => $map_id,
-                'lat'    => $lat,
-                'lng'    => $lng,
-                'zoom'   => $zoom,
-                'style'  => $style_url,
-                'marker' => [
-                    'enabled' => $marker_enabled,
-                    'title'   => $marker_title,
-                    'text'    => $marker_text,
-                    'color'   => $marker_color,
+                'id'             => $map_id,
+                'lat'            => $lat,
+                'lng'            => $lng,
+                'zoom'           => $zoom,
+                'style'          => $style_url,
+                'showNavControl' => $show_nav_control,
+                'marker'         => [
+                    'enabled'  => $marker_enabled,
+                    'title'    => $marker_title,
+                    'text'     => $marker_text,
+                    'color'    => $marker_color,
+                    'iconUrl'  => $marker_icon_url,
+                    'iconSize' => $marker_icon_size >= 16 && $marker_icon_size <= 128 ? $marker_icon_size : 40,
                 ],
-                'markers' => $markers,
+                'markers'     => $markers,
+                'cpt_markers' => $cpt_markers,
             ],
         ];
 

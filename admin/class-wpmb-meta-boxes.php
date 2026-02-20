@@ -29,7 +29,15 @@ class WPMB_Meta_Boxes
         $marker_enabled = get_post_meta($post->ID, '_wpmb_marker_enabled', true);
         $marker_title   = get_post_meta($post->ID, '_wpmb_marker_title', true);
         $marker_text    = get_post_meta($post->ID, '_wpmb_marker_text', true);
-        $marker_color   = get_post_meta($post->ID, '_wpmb_marker_color', true);
+        $marker_color     = get_post_meta($post->ID, '_wpmb_marker_color', true);
+        $marker_icon_url  = get_post_meta($post->ID, '_wpmb_marker_icon_url', true);
+        $marker_icon_size = get_post_meta($post->ID, '_wpmb_marker_icon_size', true);
+        $show_nav_control = get_post_meta($post->ID, '_wpmb_show_nav_control', true);
+        $cpt_enabled    = get_post_meta($post->ID, '_wpmb_cpt_enabled', true);
+        $cpt_post_type       = get_post_meta($post->ID, '_wpmb_cpt_post_type', true);
+        $cpt_lat_meta        = get_post_meta($post->ID, '_wpmb_cpt_lat_meta', true);
+        $cpt_lng_meta        = get_post_meta($post->ID, '_wpmb_cpt_lng_meta', true);
+        $cpt_description_meta = get_post_meta($post->ID, '_wpmb_cpt_description_meta', true);
 
         $raw_markers = get_post_meta($post->ID, '_wpmb_markers', true);
         $markers     = [];
@@ -184,6 +192,31 @@ class WPMB_Meta_Boxes
                             value="<?php echo esc_attr((string) ($marker_color ?: '#ff0000')); ?>"
                         />
                     </p>
+                    <p>
+                        <label for="wpmb_marker_icon_url"><?php esc_html_e('URL de l’icône SVG (ou image)', '17b-map'); ?></label><br>
+                        <input
+                            type="url"
+                            id="wpmb_marker_icon_url"
+                            name="wpmb_marker_icon_url"
+                            value="<?php echo esc_attr((string) $marker_icon_url); ?>"
+                            class="large-text"
+                        />
+                        <button type="button" class="button" id="wpmb_marker_icon_select">
+                            <?php esc_html_e('Sélectionner une image', '17b-map'); ?>
+                        </button>
+                    </p>
+                    <p>
+                        <label for="wpmb_marker_icon_size"><?php esc_html_e('Taille de l’icône (px)', '17b-map'); ?></label><br>
+                        <input
+                            type="number"
+                            id="wpmb_marker_icon_size"
+                            name="wpmb_marker_icon_size"
+                            value="<?php echo esc_attr((string) ($marker_icon_size ?: '40')); ?>"
+                            class="small-text"
+                            min="16"
+                            max="128"
+                        />
+                    </p>
                 </div>
             </div>
 
@@ -322,6 +355,102 @@ class WPMB_Meta_Boxes
                             <?php esc_html_e('Choisis un style Mapbox prédéfini. Le style par défaut utilise Streets.', '17b-map'); ?>
                         </span>
                     </p>
+                    <p>
+                        <label class="wpmb-toggle">
+                            <input
+                                type="checkbox"
+                                name="wpmb_show_nav_control"
+                                value="1"
+                                <?php checked('1', (string) $show_nav_control); ?>
+                            />
+                            <span class="wpmb-toggle-slider" aria-hidden="true"></span>
+                            <span class="wpmb-toggle-label">
+                                <?php esc_html_e('Afficher les contrôles de zoom et de rotation', '17b-map'); ?>
+                            </span>
+                        </label>
+                    </p>
+                </div>
+            </div>
+
+            <div class="wpmb-section" data-section="cpt-source">
+                <button
+                    type="button"
+                    class="wpmb-section-header"
+                    aria-expanded="false"
+                    aria-controls="wpmb-section-cpt-source"
+                >
+                    <span class="wpmb-section-title">
+                        <?php esc_html_e('Source CPT (markers depuis un type de post)', '17b-map'); ?>
+                    </span>
+                </button>
+                <div
+                    id="wpmb-section-cpt-source"
+                    class="wpmb-section-body"
+                >
+                    <p class="description">
+                        <?php esc_html_e('Affiche sur cette carte les posts d’un type personnalisé qui ont des coordonnées (meta latitude/longitude). Ex. : CPT "Company" avec meta company_lat et company_lng.', '17b-map'); ?>
+                    </p>
+                    <p>
+                        <label class="wpmb-toggle">
+                            <input
+                                type="checkbox"
+                                name="wpmb_cpt_enabled"
+                                value="1"
+                                <?php checked('1', (string) $cpt_enabled); ?>
+                            />
+                            <span class="wpmb-toggle-slider" aria-hidden="true"></span>
+                            <span class="wpmb-toggle-label">
+                                <?php esc_html_e('Afficher les posts d’un type personnalisé sur cette carte', '17b-map'); ?>
+                            </span>
+                        </label>
+                    </p>
+                    <p>
+                        <label for="wpmb_cpt_post_type"><?php esc_html_e('Slug du type de post', '17b-map'); ?></label><br>
+                        <input
+                            type="text"
+                            id="wpmb_cpt_post_type"
+                            name="wpmb_cpt_post_type"
+                            value="<?php echo esc_attr((string) $cpt_post_type); ?>"
+                            class="regular-text"
+                            placeholder="company"
+                        />
+                    </p>
+                    <p>
+                        <label for="wpmb_cpt_lat_meta"><?php esc_html_e('Meta key Latitude', '17b-map'); ?></label><br>
+                        <input
+                            type="text"
+                            id="wpmb_cpt_lat_meta"
+                            name="wpmb_cpt_lat_meta"
+                            value="<?php echo esc_attr((string) $cpt_lat_meta); ?>"
+                            class="regular-text"
+                            placeholder="company_lat"
+                        />
+                    </p>
+                    <p>
+                        <label for="wpmb_cpt_lng_meta"><?php esc_html_e('Meta key Longitude', '17b-map'); ?></label><br>
+                        <input
+                            type="text"
+                            id="wpmb_cpt_lng_meta"
+                            name="wpmb_cpt_lng_meta"
+                            value="<?php echo esc_attr((string) $cpt_lng_meta); ?>"
+                            class="regular-text"
+                            placeholder="company_lng"
+                        />
+                    </p>
+                    <p>
+                        <label for="wpmb_cpt_description_meta"><?php esc_html_e('Meta key pour la description / adresse (optionnel)', '17b-map'); ?></label><br>
+                        <input
+                            type="text"
+                            id="wpmb_cpt_description_meta"
+                            name="wpmb_cpt_description_meta"
+                            value="<?php echo esc_attr((string) $cpt_description_meta); ?>"
+                            class="regular-text"
+                            placeholder="adresse ou description (ex. champ ACF)"
+                        />
+                        <span class="description">
+                            <?php esc_html_e('Nom du champ meta (ex. ACF) à afficher dans la popup. Si vide, l’extrait du post est utilisé.', '17b-map'); ?>
+                        </span>
+                    </p>
                 </div>
             </div>
         </div>
@@ -343,8 +472,16 @@ class WPMB_Meta_Boxes
         $marker_enabled = isset($data['wpmb_marker_enabled']) ? '1' : '0';
         $marker_title   = isset($data['wpmb_marker_title']) ? (string) $data['wpmb_marker_title'] : '';
         $marker_text    = isset($data['wpmb_marker_text']) ? (string) $data['wpmb_marker_text'] : '';
-        $marker_color   = isset($data['wpmb_marker_color']) ? (string) $data['wpmb_marker_color'] : '';
-        $markers_input  = isset($data['wpmb_markers']) && is_array($data['wpmb_markers']) ? $data['wpmb_markers'] : [];
+        $marker_color      = isset($data['wpmb_marker_color']) ? (string) $data['wpmb_marker_color'] : '';
+        $marker_icon_url   = isset($data['wpmb_marker_icon_url']) ? (string) $data['wpmb_marker_icon_url'] : '';
+        $marker_icon_size  = isset($data['wpmb_marker_icon_size']) ? (string) $data['wpmb_marker_icon_size'] : '40';
+        $show_nav_control = isset($data['wpmb_show_nav_control']) ? '1' : '0';
+        $cpt_enabled      = isset($data['wpmb_cpt_enabled']) ? '1' : '0';
+        $cpt_post_type         = isset($data['wpmb_cpt_post_type']) ? (string) $data['wpmb_cpt_post_type'] : '';
+        $cpt_lat_meta          = isset($data['wpmb_cpt_lat_meta']) ? (string) $data['wpmb_cpt_lat_meta'] : '';
+        $cpt_lng_meta          = isset($data['wpmb_cpt_lng_meta']) ? (string) $data['wpmb_cpt_lng_meta'] : '';
+        $cpt_description_meta  = isset($data['wpmb_cpt_description_meta']) ? (string) $data['wpmb_cpt_description_meta'] : '';
+        $markers_input    = isset($data['wpmb_markers']) && is_array($data['wpmb_markers']) ? $data['wpmb_markers'] : [];
 
         $lat       = filter_var($lat, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
         $lng       = filter_var($lng, FILTER_SANITIZE_NUMBER_FLOAT, FILTER_FLAG_ALLOW_FRACTION);
@@ -353,7 +490,14 @@ class WPMB_Meta_Boxes
         $marker_enabled = sanitize_text_field($marker_enabled);
         $marker_title   = sanitize_text_field($marker_title);
         $marker_text    = sanitize_textarea_field($marker_text);
-        $marker_color   = sanitize_hex_color($marker_color) ?: '';
+        $marker_color     = sanitize_hex_color($marker_color) ?: '';
+        $marker_icon_url  = esc_url_raw($marker_icon_url) ?: '';
+        $marker_icon_size = absint($marker_icon_size);
+        $marker_icon_size = $marker_icon_size >= 16 && $marker_icon_size <= 128 ? $marker_icon_size : 40;
+        $cpt_post_type         = sanitize_key($cpt_post_type);
+        $cpt_lat_meta          = sanitize_key($cpt_lat_meta);
+        $cpt_lng_meta          = sanitize_key($cpt_lng_meta);
+        $cpt_description_meta  = sanitize_key($cpt_description_meta);
 
         $markers = [];
         foreach ($markers_input as $marker) {
@@ -390,6 +534,14 @@ class WPMB_Meta_Boxes
         update_post_meta($post_id, '_wpmb_marker_title', $marker_title);
         update_post_meta($post_id, '_wpmb_marker_text', $marker_text);
         update_post_meta($post_id, '_wpmb_marker_color', $marker_color);
+        update_post_meta($post_id, '_wpmb_marker_icon_url', $marker_icon_url);
+        update_post_meta($post_id, '_wpmb_marker_icon_size', $marker_icon_size);
+        update_post_meta($post_id, '_wpmb_show_nav_control', $show_nav_control);
+        update_post_meta($post_id, '_wpmb_cpt_enabled', $cpt_enabled);
+        update_post_meta($post_id, '_wpmb_cpt_post_type', $cpt_post_type);
+        update_post_meta($post_id, '_wpmb_cpt_lat_meta', $cpt_lat_meta);
+        update_post_meta($post_id, '_wpmb_cpt_lng_meta', $cpt_lng_meta);
+        update_post_meta($post_id, '_wpmb_cpt_description_meta', $cpt_description_meta);
 
         if (! empty($markers)) {
             update_post_meta($post_id, '_wpmb_markers', wp_json_encode($markers));

@@ -245,5 +245,29 @@
                 geocodeInput.focus();
             });
         }
+
+        /**
+         * Bouton « Sélectionner une image » pour l’icône du marker (médiathèque).
+         */
+        var markerIconSelectBtn = document.getElementById('wpmb_marker_icon_select');
+        var markerIconUrlInput = document.getElementById('wpmb_marker_icon_url');
+
+        if (markerIconSelectBtn && markerIconUrlInput && typeof wp !== 'undefined' && wp.media) {
+            markerIconSelectBtn.addEventListener('click', function () {
+                var frame = wp.media({
+                    library: { type: 'image' },
+                    multiple: false
+                });
+
+                frame.on('select', function () {
+                    var attachment = frame.state().get('selection').first().toJSON();
+                    if (attachment && attachment.url) {
+                        markerIconUrlInput.value = attachment.url;
+                    }
+                });
+
+                frame.open();
+            });
+        }
     });
 })(); 

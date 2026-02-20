@@ -10,3 +10,14 @@
 .wp-block-wpmb-mapbox-map[style*="min-height"] .wpmb-map {
     min-height: 100%;
 }
+
+/* Marker personnalisé (icône SVG ou image) */
+.wpmb-marker-icon {
+    display: block;
+    line-height: 0;
+}
+
+.wpmb-marker-icon img {
+    display: block;
+    object-fit: contain;
+}
