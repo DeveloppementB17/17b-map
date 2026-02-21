@@ -1,0 +1,30 @@
+@use '../variables' as *;
+
+.wpmb-map {
+    position: relative;
+    width: 100%;
+    min-height: 300px;
+}
+
+// Si un min-height est défini sur le wrapper du bloc via Gutenberg,
+// on laisse la map s'adapter à cette hauteur.
+.wp-block-wpmb-mapbox-map[style*='min-height'] .wpmb-map {
+    min-height: 100%;
+}
+
+.wpmb-marker-icon {
+    display: block;
+    line-height: 0;
+
+    img {
+        display: block;
+        object-fit: contain;
+    }
+}
+
+.wpmb-popup-image {
+    max-width: 100%;
+    display: block;
+    margin-bottom: 8px;
+    border-radius: $radius-sm;
+}

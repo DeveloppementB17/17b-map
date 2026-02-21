@@ -45,5 +45,42 @@ class WPMB_Admin
 
         $this->meta_boxes->save_meta($post_id, $_POST);
     }
+
+    /**
+     * Retourne en JSON les meta keys distinctes d'un post type (appel AJAX admin).
+     */
+    public function ajax_get_meta_keys(): void
+    {
+        check_ajax_referer('wpmb_admin_nonce', 'nonce');
+
+        if (! current_user_can('edit_posts')) {
+            wp_send_json_error(['message' => 'Unauthorized'], 403);
+            return;
+        }
+
+        $post_type = isset($_POST['post_type']) ? sanitize_key((string) $_POST['post_type']) : '';
+
+        if ('' === $post_type) {
+            wp_send_json_error(['message' => 'Missing post_type']);
+            return;
+        }
+
+        global $wpdb;
+
+        $meta_keys = $wpdb->get_col(
+            $wpdb->prepare(
+                "SELECT DISTINCT pm.meta_key
+                 FROM {$wpdb->postmeta} pm
+                 INNER JOIN {$wpdb->posts} p ON p.ID = pm.post_id
+                 WHERE p.post_type = %s
+                   AND p.post_status = 'publish'
+                   AND pm.meta_key NOT LIKE '\\_%%'
+                 ORDER BY pm.meta_key ASC",
+                $post_type
+            )
+        );
+
+        wp_send_json_success(['meta_keys' => array_values($meta_keys ?: [])]);
+    }
 }
 

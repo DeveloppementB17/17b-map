@@ -1,0 +1,71 @@
+@use '../variables' as *;
+
+.wpmb-geocoder-ctrl {
+    position: relative;
+    min-width: 240px;
+    max-width: 320px;
+    font-family: inherit;
+
+    &--disabled .wpmb-geocoder-input {
+        opacity: 0.55;
+        cursor: not-allowed;
+        background: $bg-light;
+    }
+}
+
+.wpmb-geocoder-input {
+    display: block;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 6px 10px;
+    font-size: $font-sm;
+    line-height: 1.4;
+    border: 1px solid #ccc;
+    border-radius: $radius-sm;
+    background: $bg;
+    color: $text-dark;
+    outline: none;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.15);
+    transition: border-color $transition;
+
+    &:focus {
+        border-color: $primary;
+        box-shadow: 0 1px 6px rgba(66, 100, 251, 0.3);
+    }
+}
+
+.wpmb-geocoder-results-list {
+    display: none;
+    position: absolute;
+    top: calc(100% + 4px);
+    left: 0;
+    right: 0;
+    z-index: 100;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    background: $bg;
+    border: 1px solid #ccc;
+    border-radius: $radius-sm;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    max-height: 220px;
+    overflow-y: auto;
+
+    li {
+        padding: 7px 10px;
+        font-size: $font-sm;
+        line-height: 1.4;
+        cursor: pointer;
+        color: $text-dark;
+        border-bottom: 1px solid #f0f0f0;
+
+        &:last-child {
+            border-bottom: none;
+        }
+
+        &:hover {
+            background: $primary-light;
+            color: $primary;
+        }
+    }
+}

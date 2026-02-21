@@ -56,6 +56,8 @@ class WPMB_Plugin
             add_action('enqueue_block_editor_assets', [$this->assets, 'enqueue_block_editor_assets']);
             add_action('admin_menu', [$this->options, 'add_settings_page']);
             add_action('admin_init', [$this->options, 'register_settings']);
+
+            add_action('wp_ajax_wpmb_get_meta_keys', [$this->admin, 'ajax_get_meta_keys']);
         }
 
         add_action('wp_enqueue_scripts', [$this->assets, 'enqueue_public_assets']);

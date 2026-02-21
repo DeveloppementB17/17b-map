@@ -1,0 +1,63 @@
+@use '../variables' as *;
+
+.wpmb-meta-sections {
+    border-top: 1px solid $border-admin;
+}
+
+.wpmb-section {
+    border-bottom: 1px solid $border-admin;
+
+    &.is-collapsed {
+        .wpmb-section-body {
+            display: none;
+        }
+
+        .wpmb-section-header::after {
+            transform: rotate(-90deg);
+        }
+    }
+}
+
+.wpmb-section-header {
+    width: 100%;
+    text-align: left;
+    padding: 10px 12px;
+    background: #f6f7f7;
+    border: 0;
+    border-radius: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: $font-sm;
+
+    &:focus {
+        outline: 2px solid $wp-focus;
+        outline-offset: -2px;
+    }
+}
+
+.wpmb-section-title {
+    font-weight: 600;
+}
+
+.wpmb-section-body {
+    padding: 12px;
+    background-color: $bg;
+}
+
+.wpmb-meta-sections--accordion .wpmb-section-header::after {
+    content: '▾';
+    font-size: 11px;
+    margin-left: 8px;
+    transform: rotate(0deg);
+    transition: transform $transition;
+}
+
+.wpmb-block-preview {
+    margin-top: 12px;
+    padding: 12px;
+    border: 1px dashed #ccd0d4;
+    background-color: #f6f7f7;
+    border-radius: $radius-sm;
+}

@@ -100,6 +100,139 @@
         }
 
         /**
+         * Meta key selects dynamiques (Source CPT) via AJAX.
+         */
+        var ajaxUrl = adminConfig.ajaxUrl || '';
+        var ajaxNonce = adminConfig.nonce || '';
+        var i18nMeta = {
+            choose:  (adminConfig.i18n && adminConfig.i18n.metaKeyChoose)  || '— Choisir une meta key —',
+            custom:  (adminConfig.i18n && adminConfig.i18n.metaKeyCustom)  || 'Saisir manuellement\u2026',
+            loading: (adminConfig.i18n && adminConfig.i18n.metaKeyLoading) || 'Chargement\u2026',
+            noType:  (adminConfig.i18n && adminConfig.i18n.metaKeyNoType)  || 'S\u00e9lectionne d\u2019abord un type de post',
+        };
+
+        var cptPostTypeSelect = document.getElementById('wpmb_cpt_post_type');
+        var metaKeyFields = document.querySelectorAll('.wpmb-meta-key-field');
+
+        function wpmbSyncMetaKeyField(field, select) {
+            var hidden = field.querySelector('input[type="hidden"]');
+            var custom = field.querySelector('.wpmb-meta-key-custom');
+            if (!hidden) { return; }
+
+            if (select.value === '__custom__') {
+                if (custom) {
+                    custom.style.display = '';
+                    hidden.value = custom.value;
+                }
+            } else {
+                if (custom) { custom.style.display = 'none'; }
+                hidden.value = select.value;
+            }
+        }
+
+        function wpmbPopulateMetaKeySelects(metaKeys) {
+            metaKeyFields.forEach(function (field) {
+                var select = field.querySelector('.wpmb-meta-key-select');
+                var hidden = field.querySelector('input[type="hidden"]');
+                var custom = field.querySelector('.wpmb-meta-key-custom');
+                if (!select || !hidden) { return; }
+
+                var currentValue = hidden.value;
+
+                // Reconstruire les options
+                while (select.options.length) { select.remove(0); }
+                select.add(new Option(i18nMeta.choose, ''));
+                metaKeys.forEach(function (key) { select.add(new Option(key, key)); });
+                select.add(new Option(i18nMeta.custom, '__custom__'));
+
+                // Restaurer la valeur sauvegardée
+                if (currentValue) {
+                    var found = false;
+                    for (var i = 0; i < select.options.length; i++) {
+                        if (select.options[i].value === currentValue) {
+                            select.selectedIndex = i;
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (!found) {
+                        select.value = '__custom__';
+                        if (custom) {
+                            custom.value = currentValue;
+                            custom.style.display = '';
+                        }
+                    } else if (custom) {
+                        custom.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        function wpmbSetMetaKeySelectsState(message) {
+            metaKeyFields.forEach(function (field) {
+                var select = field.querySelector('.wpmb-meta-key-select');
+                if (!select) { return; }
+                while (select.options.length) { select.remove(0); }
+                select.add(new Option(message, ''));
+            });
+        }
+
+        function wpmbFetchMetaKeys(postType) {
+            if (!ajaxUrl || !ajaxNonce) { return; }
+            if (!postType) {
+                wpmbSetMetaKeySelectsState(i18nMeta.noType);
+                return;
+            }
+            wpmbSetMetaKeySelectsState(i18nMeta.loading);
+
+            var formData = new FormData();
+            formData.append('action', 'wpmb_get_meta_keys');
+            formData.append('nonce', ajaxNonce);
+            formData.append('post_type', postType);
+
+            fetch(ajaxUrl, { method: 'POST', body: formData })
+                .then(function (r) { return r.json(); })
+                .then(function (data) {
+                    if (data.success && Array.isArray(data.data.meta_keys)) {
+                        wpmbPopulateMetaKeySelects(data.data.meta_keys);
+                    }
+                })
+                .catch(function () {
+                    wpmbSetMetaKeySelectsState('— Erreur lors du chargement —');
+                });
+        }
+
+        // Écouter le changement du select post type
+        if (cptPostTypeSelect) {
+            cptPostTypeSelect.addEventListener('change', function () {
+                wpmbFetchMetaKeys(this.value);
+            });
+            // Peupler au chargement si un type est déjà sélectionné
+            if (cptPostTypeSelect.value) {
+                wpmbFetchMetaKeys(cptPostTypeSelect.value);
+            } else {
+                wpmbSetMetaKeySelectsState(i18nMeta.noType);
+            }
+        }
+
+        // Écouter les changements sur chaque select meta key
+        metaKeyFields.forEach(function (field) {
+            var select = field.querySelector('.wpmb-meta-key-select');
+            var custom = field.querySelector('.wpmb-meta-key-custom');
+            if (select) {
+                select.addEventListener('change', function () {
+                    wpmbSyncMetaKeyField(field, select);
+                });
+            }
+            if (custom) {
+                custom.addEventListener('input', function () {
+                    var hidden = field.querySelector('input[type="hidden"]');
+                    if (hidden) { hidden.value = custom.value; }
+                });
+            }
+        });
+
+        /**
          * Toggle du champ URL personnalisée selon le style sélectionné.
          */
         var styleSelect = document.getElementById('wpmb_style_url');

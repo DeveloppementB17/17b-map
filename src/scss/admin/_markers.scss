@@ -1,0 +1,58 @@
+@use '../variables' as *;
+
+.wpmb-marker-row {
+    margin: 12px 0;
+}
+
+.wpmb-marker-row-fields {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+
+.wpmb-marker-row-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 12px;
+}
+
+.wpmb-marker-col-coords {
+    flex: 0 0 260px;
+    max-width: 100%;
+}
+
+.wpmb-marker-col-meta {
+    flex: 1 1 320px;
+    max-width: 100%;
+
+    .large-text {
+        width: 100%;
+        max-width: 100%;
+        box-sizing: border-box;
+    }
+}
+
+.wpmb-remove-marker.button {
+    background-color: $error;
+    border-color: $error;
+    color: $bg;
+
+    &:hover,
+    &:focus {
+        background-color: $error-dark;
+        border-color: $error-dark;
+        color: $bg;
+    }
+}
+
+@media (max-width: 782px) {
+    .wpmb-marker-row-fields {
+        flex-direction: column;
+    }
+
+    .wpmb-marker-col-coords,
+    .wpmb-marker-col-meta {
+        flex: 1 1 100%;
+    }
+}

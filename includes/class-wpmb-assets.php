@@ -154,10 +154,16 @@ class WPMB_Assets
 
         $config = [
             'accessToken' => $token,
+            'ajaxUrl'     => admin_url('admin-ajax.php'),
+            'nonce'       => wp_create_nonce('wpmb_admin_nonce'),
             'i18n'        => [
-                'geocoderNoResults'   => __('Aucun résultat pour cette recherche.', '17b-map'),
-                'geocoderError'       => __('Erreur lors de la recherche d’adresse. Réessaie plus tard.', '17b-map'),
-                'geocoderMissingToken'=> __('Renseigne ton Mapbox Access Token dans les réglages du plugin pour utiliser la recherche d’adresse.', '17b-map'),
+                'geocoderNoResults'    => __('Aucun résultat pour cette recherche.', '17b-map'),
+                'geocoderError'        => __('Erreur lors de la recherche d’adresse. Réessaie plus tard.', '17b-map'),
+                'geocoderMissingToken' => __('Renseigne ton Mapbox Access Token dans les réglages du plugin pour utiliser la recherche d’adresse.', '17b-map'),
+                'metaKeyChoose'        => __('— Choisir une meta key —', '17b-map'),
+                'metaKeyCustom'        => __('Saisir manuellement…', '17b-map'),
+                'metaKeyLoading'       => __('Chargement…', '17b-map'),
+                'metaKeyNoType'        => __('Sélectionne d’abord un type de post', '17b-map'),
             ],
         ];
 

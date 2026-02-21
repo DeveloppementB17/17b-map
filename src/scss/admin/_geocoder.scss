@@ -1,0 +1,38 @@
+@use '../variables' as *;
+
+.wpmb-geocoder {
+    margin-top: 16px;
+    padding-top: 8px;
+    border-top: 1px dashed $border-admin;
+}
+
+.wpmb-geocoder-results {
+    margin: 4px 0 0;
+    padding: 0;
+    list-style: none;
+    max-height: 180px;
+    overflow: auto;
+    border: 1px solid $border-admin;
+    border-radius: 2px;
+    background-color: $bg;
+
+    &:empty {
+        display: none;
+    }
+}
+
+.wpmb-geocoder-result {
+    display: block;
+    width: 100%;
+    padding: 6px 8px;
+    border: 0;
+    background: $bg;
+    text-align: left;
+    cursor: pointer;
+    font-size: $font-sm;
+
+    &:hover,
+    &:focus {
+        background-color: #f0f0f1;
+    }
+}

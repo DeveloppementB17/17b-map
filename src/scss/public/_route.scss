@@ -1,0 +1,76 @@
+@use '../variables' as *;
+
+.wpmb-route-btn {
+    display: inline-block;
+    margin-top: 6px;
+    padding: 4px 10px;
+    font-size: $font-xs;
+    line-height: 1.5;
+    color: $primary;
+    background: $primary-light;
+    border: 1px solid $primary-border;
+    border-radius: $radius-sm;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: background $transition, color $transition;
+
+    &:hover {
+        background: $primary;
+        color: $bg;
+        border-color: $primary;
+    }
+}
+
+.wpmb-route-info {
+    position: absolute;
+    bottom: 28px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 12px;
+    background: $bg;
+    border-radius: $radius-pill;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    font-size: $font-sm;
+    font-weight: 600;
+    white-space: nowrap;
+    pointer-events: auto;
+
+    &--hint {
+        font-weight: 400;
+        font-size: $font-xs;
+        color: #666;
+    }
+}
+
+.wpmb-route-distance {
+    color: $text-dark;
+}
+
+.wpmb-route-sep {
+    color: $text-subtle;
+}
+
+.wpmb-route-duration {
+    color: $primary;
+}
+
+.wpmb-route-close {
+    margin-left: 4px;
+    padding: 0 4px;
+    font-size: $font-base;
+    line-height: 1;
+    color: #999;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 2px;
+
+    &:hover {
+        color: $text-dark;
+        background: $bg-hover;
+    }
+}

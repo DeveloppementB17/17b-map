@@ -711,7 +711,17 @@
                         c.classList.remove('wpmb-card--active');
                     });
                     card.classList.add('wpmb-card--active');
-                    card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+
+                    // Scroll dans la colonne uniquement, sans affecter le défilement de la page.
+                    var cardTop = card.offsetTop;
+                    var cardBottom = cardTop + card.offsetHeight;
+                    var colTop = listingCol.scrollTop;
+                    var colBottom = colTop + listingCol.clientHeight;
+                    if (cardTop < colTop) {
+                        listingCol.scrollTop = cardTop;
+                    } else if (cardBottom > colBottom) {
+                        listingCol.scrollTop = cardBottom - listingCol.clientHeight;
+                    }
                 }
 
                 // Construit le HTML de popup identique au marker CPT de la carte.
@@ -741,6 +751,10 @@
                 listingCol.addEventListener('click', function (e) {
                     var btn = e.target && e.target.closest('.wpmb-card-locate');
                     if (!btn) { return; }
+                    e.preventDefault();
+                    e.stopPropagation();
+                    btn.blur();
+
                     var card = btn.closest('.wpmb-card');
                     if (!card) { return; }
                     var idx = parseInt(card.getAttribute('data-marker-index'), 10);
@@ -753,7 +767,9 @@
 
                     var pHtml = wpmbBuildCptPopupHtml(m);
                     if (pHtml) {
-                        var p = new mapboxgl.Popup({ offset: 25 })
+                        // focusAfterOpen: false empêche Mapbox de focus le bouton ×
+                        // de la popup, ce qui évite le scroll automatique de la page.
+                        var p = new mapboxgl.Popup({ offset: 25, focusAfterOpen: false })
                             .setLngLat([m.lng, m.lat])
                             .setHTML(pHtml)
                             .addTo(map);

@@ -470,48 +470,86 @@ class WPMB_Meta_Boxes
                         </label>
                     </p>
                     <p>
-                        <label for="wpmb_cpt_post_type"><?php esc_html_e('Slug du type de post', '17b-map'); ?></label><br>
-                        <input
-                            type="text"
-                            id="wpmb_cpt_post_type"
-                            name="wpmb_cpt_post_type"
-                            value="<?php echo esc_attr((string) $cpt_post_type); ?>"
-                            class="regular-text"
-                            placeholder="company"
-                        />
+                        <label for="wpmb_cpt_post_type"><?php esc_html_e('Type de post', '17b-map'); ?></label><br>
+                        <?php
+                        $available_post_types = get_post_types(['public' => true], 'objects');
+                        $excluded_post_types  = ['attachment', 'mapbox_map'];
+                        ?>
+                        <select id="wpmb_cpt_post_type" name="wpmb_cpt_post_type" class="regular-text">
+                            <option value=""><?php esc_html_e('— Choisir un type de post —', '17b-map'); ?></option>
+                            <?php foreach ($available_post_types as $pt) : ?>
+                                <?php if (in_array($pt->name, $excluded_post_types, true)) { continue; } ?>
+                                <option
+                                    value="<?php echo esc_attr($pt->name); ?>"
+                                    <?php selected((string) $cpt_post_type, $pt->name); ?>
+                                >
+                                    <?php echo esc_html($pt->labels->singular_name . ' (' . $pt->name . ')'); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
                     </p>
                     <p>
                         <label for="wpmb_cpt_lat_meta"><?php esc_html_e('Meta key Latitude', '17b-map'); ?></label><br>
-                        <input
-                            type="text"
-                            id="wpmb_cpt_lat_meta"
-                            name="wpmb_cpt_lat_meta"
-                            value="<?php echo esc_attr((string) $cpt_lat_meta); ?>"
-                            class="regular-text"
-                            placeholder="company_lat"
-                        />
+                        <div class="wpmb-meta-key-field">
+                            <select class="wpmb-meta-key-select regular-text" data-for="wpmb_cpt_lat_meta">
+                                <option value=""><?php esc_html_e('— Choisir une meta key —', '17b-map'); ?></option>
+                                <option value="__custom__"><?php esc_html_e('Saisir manuellement…', '17b-map'); ?></option>
+                            </select>
+                            <input
+                                type="text"
+                                class="wpmb-meta-key-custom regular-text"
+                                style="display:none;margin-top:4px;"
+                                placeholder="company_lat"
+                            />
+                            <input
+                                type="hidden"
+                                id="wpmb_cpt_lat_meta"
+                                name="wpmb_cpt_lat_meta"
+                                value="<?php echo esc_attr((string) $cpt_lat_meta); ?>"
+                            />
+                        </div>
                     </p>
                     <p>
                         <label for="wpmb_cpt_lng_meta"><?php esc_html_e('Meta key Longitude', '17b-map'); ?></label><br>
-                        <input
-                            type="text"
-                            id="wpmb_cpt_lng_meta"
-                            name="wpmb_cpt_lng_meta"
-                            value="<?php echo esc_attr((string) $cpt_lng_meta); ?>"
-                            class="regular-text"
-                            placeholder="company_lng"
-                        />
+                        <div class="wpmb-meta-key-field">
+                            <select class="wpmb-meta-key-select regular-text" data-for="wpmb_cpt_lng_meta">
+                                <option value=""><?php esc_html_e('— Choisir une meta key —', '17b-map'); ?></option>
+                                <option value="__custom__"><?php esc_html_e('Saisir manuellement…', '17b-map'); ?></option>
+                            </select>
+                            <input
+                                type="text"
+                                class="wpmb-meta-key-custom regular-text"
+                                style="display:none;margin-top:4px;"
+                                placeholder="company_lng"
+                            />
+                            <input
+                                type="hidden"
+                                id="wpmb_cpt_lng_meta"
+                                name="wpmb_cpt_lng_meta"
+                                value="<?php echo esc_attr((string) $cpt_lng_meta); ?>"
+                            />
+                        </div>
                     </p>
                     <p>
                         <label for="wpmb_cpt_description_meta"><?php esc_html_e('Meta key pour la description / adresse (optionnel)', '17b-map'); ?></label><br>
-                        <input
-                            type="text"
-                            id="wpmb_cpt_description_meta"
-                            name="wpmb_cpt_description_meta"
-                            value="<?php echo esc_attr((string) $cpt_description_meta); ?>"
-                            class="regular-text"
-                            placeholder="adresse ou description (ex. champ ACF)"
-                        />
+                        <div class="wpmb-meta-key-field">
+                            <select class="wpmb-meta-key-select regular-text" data-for="wpmb_cpt_description_meta">
+                                <option value=""><?php esc_html_e('— Choisir une meta key —', '17b-map'); ?></option>
+                                <option value="__custom__"><?php esc_html_e('Saisir manuellement…', '17b-map'); ?></option>
+                            </select>
+                            <input
+                                type="text"
+                                class="wpmb-meta-key-custom regular-text"
+                                style="display:none;margin-top:4px;"
+                                placeholder="adresse ou description (ex. champ ACF)"
+                            />
+                            <input
+                                type="hidden"
+                                id="wpmb_cpt_description_meta"
+                                name="wpmb_cpt_description_meta"
+                                value="<?php echo esc_attr((string) $cpt_description_meta); ?>"
+                            />
+                        </div>
                         <span class="description">
                             <?php esc_html_e('Nom du champ meta (ex. ACF) à afficher dans la popup. Si vide, l’extrait du post est utilisé.', '17b-map'); ?>
                         </span>

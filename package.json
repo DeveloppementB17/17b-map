@@ -1,0 +1,13 @@
+{
+  "name": "17b-map",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "build": "sass src/scss/admin.scss:public/css/admin.css src/scss/public.scss:public/css/public.css --style=compressed --no-source-map",
+    "dev":   "sass src/scss/admin.scss:public/css/admin.css src/scss/public.scss:public/css/public.css --style=expanded",
+    "watch": "sass --watch src/scss/admin.scss:public/css/admin.css src/scss/public.scss:public/css/public.css --style=expanded"
+  },
+  "devDependencies": {
+    "sass": "^1.85.0"
+  }
+}
