@@ -100,6 +100,18 @@
         }
 
         /**
+         * Toggle du champ URL personnalisée selon le style sélectionné.
+         */
+        var styleSelect = document.getElementById('wpmb_style_url');
+        var styleCustomRow = document.getElementById('wpmb_style_custom_row');
+
+        if (styleSelect && styleCustomRow) {
+            styleSelect.addEventListener('change', function () {
+                styleCustomRow.style.display = styleSelect.value === 'custom' ? '' : 'none';
+            });
+        }
+
+        /**
          * Geocoding Mapbox pour remplir latitude/longitude du centre de la carte.
          */
         var accessToken = adminConfig && typeof adminConfig.accessToken === 'string'

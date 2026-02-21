@@ -32,11 +32,11 @@ class WPMB_Plugin
 
     public function init(): void
     {
-        $this->cpt      = new WPMB_CPT();
-        $this->admin    = new WPMB_Admin();
-        $this->frontend = new WPMB_Frontend();
-        $this->options  = new WPMB_Options();
-        $this->assets   = new WPMB_Assets($this->options);
+        $this->cpt     = new WPMB_CPT();
+        $this->admin   = new WPMB_Admin();
+        $this->options = new WPMB_Options();
+        $this->assets  = new WPMB_Assets($this->options);
+        $this->frontend = new WPMB_Frontend($this->assets);
         $this->blocks   = new WPMB_Blocks();
 
         $this->init_hooks();
